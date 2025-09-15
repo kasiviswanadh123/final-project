@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result | CardioVision AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #7e42ff;
+            --secondary: #b44eff;
+            --accent: #ff49b6;
+            --light: #f8f9fa;
+            --dark: #1a1c23;
+            --success: #42ffbb;
+            --warning: #ffdf42;
+            --danger: #ff4270;
+            --card-bg: rgba(15, 20, 30, 0.7);
+            --text-light: #ffffff;
+            --text-secondary: #b1b1b1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0b0b20, #1a1a40);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 3D Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+        
+        /* Glass Morphism Header */
+        header {
+            background: rgba(10, 12, 28, 0.5);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--accent);
+            filter: drop-shadow(0 0 15px var(--accent));
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .user-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .user-img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--accent);
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-info h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .user-info p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 30px 40px;
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Welcome Banner with Glow Effect */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(126, 66, 255, 0.2), rgba(255, 73, 182, 0.2));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: glow 3s infinite alternate;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(126, 66, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(126, 66, 255, 0.8), 0 0 30px rgba(255, 73, 182, 0.6);
+            }
+        }
+        
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .welcome-banner h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        
+        .welcome-banner p {
+            max-width: 600px;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        /* Result Card */
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            margin-bottom: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4), 0 0 30px rgba(126, 66, 255, 0.2);
+        }
+        
+        .pulse-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0;
+            border-radius: 50%;
+            animation: pulse 3s infinite;
+            z-index: -1;
+        }
+        
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: iconPulse 2s infinite;
+            filter: drop-shadow(0 0 15px var(--success));
+        }
+        
+        @keyframes iconPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(126, 66, 255, 0.5);
+        }
+        
+        .result-probability {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+        }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .detail-card:hover::before {
+            left: 100%;
+        }
+        
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .detail-card h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .detail-card p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Risk Level Specific Styling */
+        .low-risk .result-icon {
+            color: var(--success);
+        }
+        
+        .low-risk .pulse-effect {
+            background: radial-gradient(circle, var(--success) 0%, transparent 70%);
+        }
+        
+        .high-risk .result-icon {
+            color: var(--danger);
+        }
+        
+        .high-risk .pulse-effect {
+            background: radial-gradient(circle, var(--danger) 0%, transparent 70%);
+        }
+        
+        /* Celebration Effects */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            opacity: 0;
+            z-index: 1000;
+            animation: confettiFall 5s ease-in-out forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Glowing Elements */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(var(--primary), transparent 70%);
+            opacity: 0.05;
+            filter: blur(40px);
+            z-index: -1;
+        }
+        
+        .glow-1 {
+            top: -150px;
+            right: -150px;
+        }
+        
+        .glow-2 {
+            bottom: -150px;
+            left: -150px;
+            background: radial-gradient(var(--accent), transparent 70%);
+        }
+        
+        /* Health Metrics */
+        .health-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(to right, var(--light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: var(--text-secondary);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) translateX(1000px);
+                opacity: 0;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .welcome-banner {
+                padding: 20px;
+            }
+            
+            .result-card {
+                padding: 30px 20px;
+            }
+            
+            .result-title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .health-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div class="particles"></div>
+    
+    <header>
+        <a href="/" class="logo">
+            <i class="fas fa-heart-pulse"></i>
+            <span>CardioVision AI</span>
+        </a>
+        <div class="user-profile">
+            <div class="user-info">
+                <h4>{{username}}</h4>
+                <p>Premium Member</p>
+            </div>
+            <img src="https://ui-avatars.com/api/?name={{username}}&background=ff4757&color=fff" alt="User" class="user-img">
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="welcome-banner fade-in">
+            <h2>Heart Disease Prediction Results</h2>
+            <p>Your comprehensive analysis is ready. Based on our advanced AI algorithms, here's your cardiovascular health assessment.</p>
+        </div>
+        
+        <div class="result-card {% if 'Low Risk' in prediction.result %}low-risk{% else %}high-risk{% endif %} fade-in delay-1">
+            <div class="glow glow-1"></div>
+            <div class="glow glow-2"></div>
+            <div class="pulse-effect"></div>
+            
+            {% if "Low Risk" in prediction.result %}
+                <i class="fas fa-heart result-icon"></i>
+                <h1 class="result-title">Congratulations!</h1>
+                <p class="result-probability">Your heart disease risk is <strong>{{ prediction.probability }}</strong></p>
+                <div class="result-title">{{ prediction.result }}</div>
+            {% else %}
+                <i class="fas fa-heart-broken result-icon"></i>
+                <h1 class="result-title">Attention Required</h1>
+                <p class="result-probability">Your heart disease risk is <strong>{{ prediction.probability }}</strong></p>
+                <div class="result-title">{{ prediction.result }}</div>
+            {% endif %}
+            
+            <div class="health-metrics fade-in delay-2">
+                <div class="metric-card">
+                    <div class="metric-value">{{ prediction.age }}</div>
+                    <div class="metric-label">Age</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ prediction.gender }}</div>
+                    <div class="metric-label">Gender</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ prediction.smoking }}</div>
+                    <div class="metric-label">Smoking</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ prediction.bmi }}</div>
+                    <div class="metric-label">BMI</div>
+                </div>
+            </div>
+            
+            <div class="result-details fade-in delay-2">
+                <div class="detail-card">
+                    <h3>Blood Pressure</h3>
+                    <p>{{ prediction.bp }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Alcohol Consumption</h3>
+                    <p>{{ prediction.alcohol }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Physical Activity</h3>
+                    <p>{{ prediction.physical_activity }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Stress Level</h3>
+                    <p>{{ prediction.stress }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Family History</h3>
+                    <p>{{ prediction.family_history }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Assessment Date</h3>
+                    <p>{{ now }}</p>
+                </div>
+            </div>
+            
+            <div class="action-buttons fade-in delay-3">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <a href="{{ url_for('tips') }}" class="btn btn-secondary">
+                    <i class="fas fa-lightbulb"></i> Health Tips
+                </a>
+                <a href="{{ url_for('appointment') }}" class="btn btn-secondary">
+                    <i class="fas fa-calendar-check"></i> Book Appointment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js background animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('bg-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Create particles for background
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 2000;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            const colorArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 100;
+                colorArray[i] = Math.random();
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            // Create floating cubes
+            const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+            const cubes = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const material = new THREE.MeshPhongMaterial({
+                    color: new THREE.Color(Math.random() * 0xffffff),
+                    transparent: true,
+                    opacity: 0.1,
+                    wireframe: true
+                });
+                
+                const cube = new THREE.Mesh(cubeGeometry, material);
+                cube.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 10
+                );
+                cube.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                
+                cubes.push({
+                    mesh: cube,
+                    speed: {
+                        x: (Math.random() - 0.5) * 0.01,
+                        y: (Math.random() - 0.5) * 0.01,
+                        z: (Math.random() - 0.5) * 0.01
+                    }
+                });
+                
+                scene.add(cube);
+            }
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0x00ffff, 0.5);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            camera.position.z = 5;
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.x += 0.0001;
+                particlesMesh.rotation.y += 0.0001;
+                
+                cubes.forEach(cube => {
+                    cube.mesh.rotation.x += cube.speed.x;
+                    cube.mesh.rotation.y += cube.speed.y;
+                    cube.mesh.rotation.z += cube.speed.z;
+                    
+                    cube.mesh.position.x += Math.sin(Date.now() * 0.001 + cube.mesh.position.y) * 0.001;
+                    cube.mesh.position.y += Math.cos(Date.now() * 0.001 + cube.mesh.position.x) * 0.001;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            // Create particles for background
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                
+                // Random animation duration
+                const duration = Math.random() * 20 + 10;
+                
+                // Random delay
+                const delay = Math.random() * 10;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Create celebration confetti for low risk results
+            {% if "Low Risk" in prediction.result %}
+            setTimeout(function() {
+                for (let i = 0; i < 100; i++) {
+                    createConfetti();
+                }
+            }, 1000);
+            {% endif %}
+            
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random position
+                const posX = Math.random() * window.innerWidth;
+                
+                // Random size
+                const size = Math.random() * 10 + 5;
+                
+                // Random color
+                const colors = ['#7e42ff', '#b44eff', '#ff49b6', '#42ffbb', '#1e90ff', '#ffdf42'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random animation duration
+                const duration = Math.random() * 3 + 3;
+                
+                // Random delay
+                const delay = Math.random() * 2;
+                
+                confetti.style.left = `${posX}px`;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.animationDuration = `${duration}s`;
+                confetti.style.animationDelay = `${delay}s`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation completes
+                setTimeout(function() {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+            
+            // Add interactive effects to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const angleY = (x - centerX) / 25;
+                    const angleX = (centerY - y) / 25;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateZ(10px)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                });
+            });
+            
+            // Show result message with SweetAlert
+            setTimeout(function() {
+                {% if "Low Risk" in prediction.result %}
+                Swal.fire({
+                    title: 'Great News!',
+                    html: `
+                        <div style="text-align: center;">
+                            <i class="fas fa-heart" style="font-size: 3rem; color: #42ffbb;"></i>
+                            <p style="margin-top: 20px; font-size: 1.2rem;">Your heart health assessment shows <strong>low risk</strong> for cardiovascular disease.</p>
+                            <p>Keep up your healthy habits!</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'Continue',
+                    confirmButtonColor: '#42ffbb'
+                });
+                {% else %}
+                Swal.fire({
+                    title: 'Important Health Notice',
+                    html: `
+                        <div style="text-align: center;">
+                            <i class="fas fa-heartbeat" style="font-size: 3rem; color: #ff4270;"></i>
+                            <p style="margin-top: 20px; font-size: 1.2rem;">Your assessment indicates <strong>elevated risk</strong> for cardiovascular disease.</p>
+                            <p>Please consult with a healthcare professional for personalized advice.</p>
+                        </div>
+                    `,
+                    confirmButtonText: 'I Understand',
+                    confirmButtonColor: '#ff4270'
+                });
+                {% endif %}
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

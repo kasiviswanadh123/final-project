@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Health Assessment Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #ff6b81;
+            --accent: #ff9f43;
+            --light: #f8f9fa;
+            --dark: #2f3542;
+            --success: #2ed573;
+            --neon-blue: #0ff0fc;
+            --neon-pink: #ff2ced;
+            --neon-purple: #9d00ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) translateX(1000px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(15, 240, 252, 0.3);
+            position: relative;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .speedometer-container {
+            position: relative;
+            width: 350px;
+            height: 200px;
+            margin-bottom: 2rem;
+        }
+
+        .speedometer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .speedometer-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 175px 175px 0 0;
+            background: conic-gradient(
+                from 0.25turn at 50% 100%,
+                var(--success) 0%,
+                var(--accent) 50%,
+                var(--primary) 100%
+            );
+            overflow: hidden;
+            clip-path: circle(50% at 50% 100%);
+            box-shadow: 0 0 30px rgba(46, 213, 115, 0.3);
+        }
+
+        .speedometer-center {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            left: 50%;
+            bottom: -60px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .needle {
+            position: absolute;
+            width: 4px;
+            height: 100px;
+            background: white;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 1.5s ease-out;
+            z-index: 10;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .needle::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .score-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 350px;
+            margin: 0 auto 2rem;
+            padding: 0 20px;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            position: relative;
+            font-weight: 500;
+        }
+
+        .score-label::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: rgba(255,255,255,0.5);
+            transform: translateX(-50%);
+        }
+
+        .result-message {
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: white;
+            max-width: 600px;
+        }
+
+        .result-message strong {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .risk-level {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .assessment-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-top: 1.5rem;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendations::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--neon-blue), var(--neon-pink));
+        }
+
+        .recommendations h2 {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .recommendation-card {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateX(10px);
+        }
+
+        .recommendation-card:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .recommendation-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.5);
+        }
+
+        .recommendation-content h3 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .recommendation-content p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            box-shadow: 0 0 25px rgba(157, 0, 255, 0.4);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 40px rgba(157, 0, 255, 0.7);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.6s;
+            z-index: -1;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .speedometer-container {
+                width: 280px;
+                height: 160px;
+            }
+            
+            .score-labels {
+                width: 280px;
+            }
+            
+            .recommendation-card {
+                flex-direction: column;
+            }
+            
+            .recommendation-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <h1>Your Health Assessment</h1>
+            <p class="subtitle">Here are your results and personalized recommendations</p>
+        </header>
+
+        <div class="results-container">
+            <div class="speedometer-container">
+                <div class="speedometer">
+                    <div class="speedometer-base"></div>
+                    <div class="needle" id="needle"></div>
+                    <div class="speedometer-center" id="scoreValue">0</div>
+                </div>
+            </div>
+            
+            <div class="score-labels">
+                <div class="score-label">Excellent</div>
+                <div class="score-label">Good</div>
+                <div class="score-label">Needs Work</div>
+            </div>
+            
+            <div class="risk-level" id="riskLevel">
+                Risk Level: Not Assessed
+            </div>
+            
+            <div class="assessment-message" id="assessmentMessage">
+                Your health assessment results will appear here
+            </div>
+            
+            <div class="result-message" id="resultMessage">
+                Calculating your health assessment...
+            </div>
+        </div>
+
+        <div class="recommendations" id="recommendations">
+            <h2>Your Personalized Health Plan</h2>
+            
+            <div class="recommendation-card">
+                <div class="recommendation-icon">💤</div>
+                <div class="recommendation-content">
+                    <h3>Improve Sleep Quality</h3>
+                    <p>Aim for 7-9 hours of quality sleep each night. Establish a regular sleep schedule and create a relaxing bedtime routine.</p>
+                </div>
+            </div>
+            
+            <div class="recommendation-card">
+                <div class="recommendation-icon">🏃</div>
+                <div class="recommendation-content">
+                    <h3>Increase Physical Activity</h3>
+                    <p>Try to get at least 150 minutes of moderate exercise weekly. Start with brisk walking if you're new to exercise.</p>
+                </div>
+            </div>
+            
+            <div class="recommendation-card">
+                <div class="recommendation-icon">🥗</div>
+                <div class="recommendation-content">
+                    <h3>Optimize Nutrition</h3>
+                    <p>Focus on whole foods, especially vegetables and fruits. Reduce processed foods and added sugars.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('quiz')}}" class="btn btn-primary">Retake Assessment</a>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('dashboard')}}" class="btn btn-primary">Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Create particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                
+                // Random animation duration and delay
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 10;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Get score from URL parameter or Flask template variable
+            const urlParams = new URLSearchParams(window.location.search);
+            let score = {{ score|default(0) }};
+            
+            // If not set by Flask, check URL params
+            if (score === 0) {
+                score = urlParams.get('score') || localStorage.getItem('healthScore') || 0;
+            }
+            
+            score = Math.min(100, Math.max(0, parseInt(score)));
+            
+            // Calculate needle position (0-100 maps to -90deg to 90deg)
+            const needle = document.getElementById('needle');
+            const scoreValue = document.getElementById('scoreValue');
+            const resultMessage = document.getElementById('resultMessage');
+            const recommendations = document.getElementById('recommendations');
+            const riskLevel = document.getElementById('riskLevel');
+            const assessmentMessage = document.getElementById('assessmentMessage');
+            
+            // Set risk level and assessment message based on score
+            let riskText = '';
+            let assessmentText = '';
+            
+            if (score >= 80) {
+                riskText = 'Low Risk';
+                assessmentText = 'Your health habits are excellent! Keep up the good work to maintain your low risk status.';
+                riskLevel.style.color = 'var(--success)';
+            } else if (score >= 50) {
+                riskText = 'Moderate Risk';
+                assessmentText = 'You have some healthy habits, but there are areas for improvement to reduce your health risks.';
+                riskLevel.style.color = 'var(--accent)';
+            } else {
+                riskText = 'High Risk';
+                assessmentText = 'Your current health habits indicate significant risks. Consider making changes and consulting a healthcare professional.';
+                riskLevel.style.color = 'var(--primary)';
+            }
+            
+            // Animate the needle
+            setTimeout(() => {
+                const rotation = (score / 100) * 180 - 90;
+                needle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+                
+                // Animate the score counter
+                let current = 0;
+                const interval = setInterval(() => {
+                    if (current >= score) {
+                        clearInterval(interval);
+                        scoreValue.textContent = score;
+                        
+                        // Update risk level and assessment after score animation
+                        riskLevel.textContent = `Risk Level: ${riskText}`;
+                        assessmentMessage.textContent = assessmentText;
+                    } else {
+                        current++;
+                        scoreValue.textContent = current;
+                    }
+                }, 20);
+                
+                // Set message based on score
+                if (score >= 80) {
+                    resultMessage.innerHTML = `<strong>Excellent health!</strong> Your score of ${score} indicates you have very healthy habits. Keep up the great work!`;
+                    resultMessage.style.color = 'var(--success)';
+                    
+                    // Update recommendations for high scorers
+                    recommendations.innerHTML = `
+                        <h2>Maintenance Plan</h2>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🔄</div>
+                            <div class="recommendation-content">
+                                <h3>Maintain Your Routine</h3>
+                                <p>You're doing great! Continue with your current healthy habits and consider setting new wellness goals.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🧠</div>
+                            <div class="recommendation-content">
+                                <h3>Mental Wellness</h3>
+                                <p>Consider adding mindfulness or meditation to your routine for even greater wellbeing benefits.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🏆</div>
+                            <div class="recommendation-content">
+                                <h3>Set New Goals</h3>
+                                <p>Challenge yourself with new fitness targets or nutrition improvements to take your health to the next level.</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (score >= 50) {
+                    resultMessage.innerHTML = `<strong>Good health!</strong> Your score of ${score} shows you're on the right track, but there's room for improvement in some areas.`;
+                    resultMessage.style.color = 'var(--accent)';
+                    
+                    // Update recommendations for medium scorers
+                    recommendations.innerHTML = `
+                        <h2>Improvement Plan</h2>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">⏰</div>
+                            <div class="recommendation-content">
+                                <h3>Sleep Schedule</h3>
+                                <p>Aim for consistent bedtimes and wake times. Reduce screen time before bed for better sleep quality.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🚶</div>
+                            <div class="recommendation-content">
+                                <h3>Increase Activity</h3>
+                                <p>Add 30 minutes of walking daily. Consider strength training twice weekly for additional benefits.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🥦</div>
+                            <div class="recommendation-content">
+                                <h3>Nutrition Focus</h3>
+                                <p>Add 1-2 more vegetable servings daily. Replace processed snacks with whole food alternatives.</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultMessage.innerHTML = `<strong>Needs improvement.</strong> Your score of ${score} indicates significant health risks. Consider consulting a healthcare professional.`;
+                    resultMessage.style.color = 'var(--primary)';
+                    
+                    // Update recommendations for low scorers
+                    recommendations.innerHTML = `
+                        <h2>Action Plan</h2>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">👨‍⚕️</div>
+                            <div class="recommendation-content">
+                                <h3>Medical Consultation</h3>
+                                <p>Schedule a checkup with your doctor to discuss your health risks and create a personalized plan.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🏋️</div>
+                            <div class="recommendation-content">
+                                <h3>Start Moving</h3>
+                                <p>Begin with 10-15 minutes of daily activity and gradually increase. Even short walks can make a difference.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="recommendation-icon">🛒</div>
+                            <div class="recommendation-content">
+                                <h3>Diet Overhaul</h3>
+                                <p>Focus on whole, unprocessed foods. Reduce sugar, salt, and unhealthy fats significantly.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Animate elements
+                document.querySelectorAll('.recommendation-card').forEach((card, index) => {
+                    card.style.animation = `fadeInUp 0.6s forwards ${index * 0.1 + 0.5}s`;
+                    card.style.opacity = '0';
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

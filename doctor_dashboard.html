@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard | MediCare Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2b7a78;
+            --primary-dark: #17252a;
+            --primary-light: #3aafa9;
+            --secondary: #def2f1;
+            --accent: #feffff;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--primary-dark);
+            color: white;
+            padding: 30px 0;
+            position: relative;
+            z-index: 10;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 3px solid var(--primary-light);
+        }
+
+        .doctor-info h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .doctor-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-item.active, .menu-item:hover {
+            background: rgba(58, 175, 169, 0.2);
+            border-left: 3px solid var(--primary-light);
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 30px;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--primary-dark);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            width: 300px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            padding: 5px 10px;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .search-bar i {
+            color: #777;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary-light);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-card .change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .change.up {
+            color: var(--success);
+        }
+
+        .change.down {
+            color: var(--danger);
+        }
+
+        /* Appointments Section */
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary-light);
+        }
+
+        .appointments-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .appointment-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 4px solid var(--primary-light);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .patient-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            border: 2px solid var(--secondary);
+        }
+
+        .patient-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .patient-email {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .appointment-time {
+            background: var(--secondary);
+            color: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .appointment-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-item i {
+            width: 20px;
+            color: var(--primary-light);
+            margin-right: 10px;
+        }
+
+        .symptoms-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .symptom-tag {
+            background: #f0f7f7;
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .symptom-tag i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+
+        .appointment-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .btn i {
+            margin-right: 5px;
+        }
+
+        .btn-accept {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: #27ae60;
+        }
+
+        .btn-reschedule {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-reschedule:hover {
+            background: #e67e22;
+        }
+
+        .btn-decline {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-decline:hover {
+            background: #c0392b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-bar {
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .appointment-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+            
+            .btn:last-child {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Doctor" class="doctor-avatar">
+                <div class="doctor-info">
+                    <h3>Dr. {{ session['doctor_name'] }}</h3>
+                    <p>Cardiologist</p>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Patients</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-prescription"></i>
+                    <span>Prescriptions</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Today's Appointments</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search appointments...">
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Appointments</h3>
+                    <div class="value">{{ total_appointments }}</div>
+                    <div class="change up">
+                        <i class="fas fa-arrow-up"></i> 12% from yesterday
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Completed</h3>
+                    <div class="value">{{ completed_appointments }}</div>
+                    <div class="change up">
+                        <i class="fas fa-arrow-up"></i> 5% from yesterday
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending</h3>
+                    <div class="value">{{ pending_appointments }}</div>
+                    <div class="change down">
+                        <i class="fas fa-arrow-down"></i> 3% from yesterday
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Urgent Cases</h3>
+                    <div class="value">{{ urgent_appointments }}</div>
+                    <div class="change up">
+                        <i class="fas fa-arrow-up"></i> 8% from yesterday
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments List -->
+            <h2 class="section-title">
+                <i class="fas fa-list"></i> Upcoming Appointments
+            </h2>
+            <div class="appointments-container">
+                {% for appointment in appointments %}
+                <div class="appointment-card" style="animation-delay: {{ loop.index * 0.1 }}s">
+                    <div class="appointment-header">
+                        <div class="patient-info">
+                            <img src="https://randomuser.me/api/portraits/{% if loop.index % 2 == 0 %}women{% else %}men{% endif %}/{{ loop.index }}.jpg" 
+                                 alt="Patient" class="patient-avatar">
+                            <div>
+                                <div class="patient-name">{{ appointment.full_name }}</div>
+                                <div class="patient-email">{{ appointment.email }}</div>
+                            </div>
+                        </div>
+                        <div class="appointment-time">
+                            {{ appointment.time_slot }}
+                        </div>
+                    </div>
+                    <div class="appointment-details">
+                        <div class="detail-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>{{ appointment.preferred_date }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>Cardiology Consultation</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>{{ appointment.additional_details or "No additional notes" }}</span>
+                        </div>
+                    </div>
+                    {% if appointment.chest_pain or appointment.shortness_of_breath or appointment.palpitations or 
+                          appointment.dizziness or appointment.fatigue or appointment.swelling_in_legs %}
+                    <div class="symptoms-list">
+                        {% if appointment.chest_pain %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-heart"></i> Chest Pain
+                        </div>
+                        {% endif %}
+                        {% if appointment.shortness_of_breath %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-wind"></i> Shortness of Breath
+                        </div>
+                        {% endif %}
+                        {% if appointment.palpitations %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-heartbeat"></i> Palpitations
+                        </div>
+                        {% endif %}
+                        {% if appointment.dizziness %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-dizzy"></i> Dizziness
+                        </div>
+                        {% endif %}
+                        {% if appointment.fatigue %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-tired"></i> Fatigue
+                        </div>
+                        {% endif %}
+                        {% if appointment.swelling_in_legs %}
+                        <div class="symptom-tag">
+                            <i class="fas fa-socks"></i> Swelling in Legs
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="appointment-actions">
+                        <button class="btn btn-accept">
+                            <i class="fas fa-check"></i> Accept
+                        </button>
+                        <button class="btn btn-reschedule">
+                            <i class="fas fa-calendar-alt"></i> Reschedule
+                        </button>
+                        <button class="btn btn-decline">
+                            <i class="fas fa-times"></i> Decline
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple animation for cards to appear one by one
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.appointment-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Portal Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === Medical Theme Colors === */
+        :root {
+            --primary: #2b7bba;
+            --primary-light: #e8f2fa;
+            --secondary: #4caf50;
+            --accent: #2196f3;
+            --background: #f8fbfe;
+            --text: #2c3e50;
+            --card-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 90% 5%, var(--primary-light), transparent 30%),
+                radial-gradient(circle at 10% 80%, rgba(76, 175, 80, 0.1), transparent 30%),
+                linear-gradient(135deg, #e8f2fa, #f8fbfe, #e8f2fa);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            perspective: 1000px;
+            color: var(--text);
+        }
+
+        /* === Medical Icons Floating === */
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        .medical-icon {
+            position: absolute;
+            color: rgba(43, 123, 186, 0.15);
+            font-size: 24px;
+            animation: floatIcon 8s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        /* === 3D Medical Card === */
+        .login-box {
+            width: 380px;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            box-shadow: 
+                0 15px 35px rgba(43, 123, 186, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.9),
+                0 0 30px rgba(76, 175, 80, 0.15),
+                0 0 60px rgba(33, 150, 243, 0.1);
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* === 3D Tilt Effect === */
+        .login-box:hover {
+            transform: rotateX(3deg) rotateY(3deg);
+        }
+
+        /* === Subtle Shine Effect === */
+        .login-box::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent,
+                rgba(255, 255, 255, 0.5),
+                transparent
+            );
+            transform: rotate(30deg);
+            animation: shine 8s infinite linear;
+            z-index: -1;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        /* === Medical Title === */
+        .login-box h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 28px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .login-box h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        /* === Medical Inputs === */
+        .input-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(232, 242, 250, 0.5);
+            border: 1px solid rgba(43, 123, 186, 0.2);
+            outline: none;
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .input-box input:focus {
+            background: rgba(232, 242, 250, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 0 15px rgba(43, 123, 186, 0.1),
+                0 0 0 2px rgba(43, 123, 186, 0.2);
+            border-color: var(--primary);
+        }
+
+        .input-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus + i {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        /* === Medical Button === */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            outline: none;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 10px rgba(43, 123, 186, 0.4),
+                0 0 20px rgba(33, 150, 243, 0.2);
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 
+                0 0 15px rgba(43, 123, 186, 0.5),
+                0 0 30px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* === Particle Effect (now with medical colors) === */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            background: radial-gradient(circle, var(--primary-light), transparent 70%);
+            filter: blur(1px);
+        }
+
+        /* === Footer Link === */
+        p {
+            margin-top: 20px;
+            color: var(--text);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        p a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+        }
+
+        p a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        p a:hover::after {
+            width: 100%;
+        }
+
+        /* === Medical Logo Placeholder === */
+        .medical-logo {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .medical-logo i {
+            font-size: 42px;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(43, 123, 186, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Medical Icons -->
+    <div class="medical-icon" style="top: 10%; left: 15%; animation-delay: 0s;"><i class="fas fa-heartbeat"></i></div>
+    <div class="medical-icon" style="top: 80%; left: 25%; animation-delay: 1s;"><i class="fas fa-stethoscope"></i></div>
+    <div class="medical-icon" style="top: 30%; left: 70%; animation-delay: 2s;"><i class="fas fa-plus-circle"></i></div>
+    <div class="medical-icon" style="top: 60%; left: 85%; animation-delay: 3s;"><i class="fas fa-hospital"></i></div>
+    <div class="medical-icon" style="top: 20%; left: 45%; animation-delay: 4s;"><i class="fas fa-first-aid"></i></div>
+    <div class="medical-icon" style="top: 75%; left: 65%; animation-delay: 5s;"><i class="fas fa-pills"></i></div>
+
+    <!-- 3D Login Box -->
+    <div class="login-box">
+        <div class="medical-logo">
+            <i class="fas fa-hospital-symbol"></i>
+        </div>
+        <h2>Medical Portal</h2>
+        
+        <form id="login-form" method="POST" action="{{ url_for('login') }}">
+            <div class="input-box">
+                <input type="email" name="email" placeholder="Email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+                <i class="fas fa-lock"></i>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
+        </form>
+    </div>
+
+    <script>
+        // === Floating Medical Icons Generator ===
+        function createMedicalIcons() {
+            const icons = [
+                'fas fa-heartbeat', 'fas fa-stethoscope', 'fas fa-ambulance',
+                'fas fa-user-md', 'fas fa-pills', 'fas fa-syringe',
+                'fas fa-plus-circle', 'fas fa-hospital', 'fas fa-first-aid',
+                'fas fa-brain', 'fas fa-lungs', 'fas fa-teeth'
+            ];
+            
+            for (let i = 0; i < 12; i++) {
+                const icon = document.createElement("div");
+                icon.classList.add("medical-icon");
+                icon.innerHTML = `<i class="${icons[i]}"></i>`;
+                
+                icon.style.left = `${Math.random() * 90 + 5}%`;
+                icon.style.top = `${Math.random() * 90 + 5}%`;
+                icon.style.fontSize = `${Math.random() * 12 + 16}px`;
+                icon.style.animationDelay = `${Math.random() * 6}s`;
+                icon.style.color = `rgba(43, 123, 186, ${Math.random() * 0.1 + 0.1})`;
+                
+                document.body.appendChild(icon);
+            }
+        }
+        createMedicalIcons();
+
+        // === 3D Tilt Effect ===
+        const loginBox = document.querySelector(".login-box");
+        document.addEventListener("mousemove", (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
+            loginBox.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        });
+
+        // === Particle Explosion on Click (medical colors) ===
+        document.addEventListener("click", (e) => {
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement("div");
+                particle.classList.add("particle");
+                
+                particle.style.left = `${e.clientX}px`;
+                particle.style.top = `${e.clientY}px`;
+                
+                const size = Math.random() * 8 + 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Use medical theme colors
+                const colors = ['#2b7bba', '#4caf50', '#2196f3', '#e8f2fa'];
+                particle.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent 70%)`;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 4 + 2;
+                const xVel = Math.cos(angle) * speed;
+                const yVel = Math.sin(angle) * speed;
+                
+                document.body.appendChild(particle);
+                
+                let opacity = 1;
+                const fade = setInterval(() => {
+                    opacity -= 0.03;
+                    particle.style.opacity = opacity;
+                    
+                    if (opacity <= 0) {
+                        clearInterval(fade);
+                        particle.remove();
+                    }
+                }, 30);
+                
+                let posX = e.clientX;
+                let posY = e.clientY;
+                const move = setInterval(() => {
+                    posX += xVel;
+                    posY += yVel;
+                    particle.style.left = `${posX}px`;
+                    particle.style.top = `${posY}px`;
+                }, 30);
+            }
+        });
+
+        // === Form Submission Effect ===
+        document.getElementById("login-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const btn = document.querySelector(".btn");
+            const rect = btn.getBoundingClientRect();
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement("div");
+                    particle.classList.add("particle");
+                    particle.style.left = `${rect.left + rect.width / 2}px`;
+                    particle.style.top = `${rect.top + rect.height / 2}px`;
+                    
+                    const size = Math.random() * 8 + 4;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Use medical theme colors
+                    const colors = ['#2b7bba', '#4caf50', '#2196f3'];
+                    particle.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]}, transparent 70%)`;
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 6 + 2;
+                    const xVel = Math.cos(angle) * speed;
+                    const yVel = Math.sin(angle) * speed;
+                    
+                    document.body.appendChild(particle);
+                    
+                    let opacity = 1;
+                    const fade = setInterval(() => {
+                        opacity -= 0.03;
+                        particle.style.opacity = opacity;
+                        if (opacity <= 0) {
+                            clearInterval(fade);
+                            particle.remove();
+                        }
+                    }, 30);
+                    
+                    let posX = rect.left + rect.width / 2;
+                    let posY = rect.top + rect.height / 2;
+                    const move = setInterval(() => {
+                        posX += xVel;
+                        posY += yVel;
+                        particle.style.left = `${posX}px`;
+                        particle.style.top = `${posY}px`;
+                    }, 30);
+                }, i * 40);
+            }
+            
+            // Actually submit the form after a brief delay for the animation
+            setTimeout(() => {
+                this.submit();
+            }, 800);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Ultimate Heart Health Guide | Interactive & Beautiful</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #ff6b81;
+            --accent: #ff9f43;
+            --light: #f8f9fa;
+            --dark: #2f3542;
+            --success: #2ed573;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffeef8 100%);
+            color: var(--dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+        
+        /* Animated Header */
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 30px 30px;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3);
+            margin-bottom: 30px;
+            animation: gradientShift 8s ease infinite;
+            background-size: 200% 200%;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInDown 1s ease;
+        }
+        
+        .intro {
+            max-width: 800px;
+            margin: 20px auto;
+            font-size: 1.2em;
+            opacity: 0.9;
+            animation: fadeIn 1.5s ease;
+        }
+        
+        /* Pulse Animation for Heart Icon */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .heart-icon {
+            animation: pulse 2s infinite;
+            display: inline-block;
+            margin: 0 10px;
+        }
+        
+        /* Tip Sections with 3D Effect */
+        .tip-section {
+            background: white;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid var(--primary);
+            transform: perspective(1000px) rotateX(0deg);
+        }
+        
+        .tip-section:hover {
+            transform: perspective(1000px) rotateX(5deg) translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .tip-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .tip-section h2 {
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-top: 0;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tip-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+        }
+        
+        .tip-section img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .tip-section:hover img {
+            transform: scale(1.02);
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        ul li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 30px;
+            list-style-type: none;
+        }
+        
+        ul li::before {
+            content: '\f004';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.8em;
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: var(--secondary);
+        }
+        
+        /* Back Button with Animation */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+        
+        .back-btn i {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--secondary);
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .back-btn:hover i {
+            transform: translateX(-3px);
+        }
+        
+        /* Floating Hearts Animation */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 71, 87, 0.3);
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero {
+                padding: 30px 15px;
+            }
+            
+            .tip-section {
+                padding: 20px 15px;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 71, 87, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Floating Hearts Background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Back Button -->
+    <a href="{{ url_for('index') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1><span class="heart-icon">❤️</span> Ultimate Heart Health Guide <span class="heart-icon">❤️</span></h1>
+        <p class="intro">
+            Your heart is your most precious organ — treat it with care! Whether you're managing heart disease, 
+            at risk, or in perfect health, these <strong>scientifically-backed</strong> tips will help you live 
+            a longer, stronger, and happier life.
+        </p>
+    </div>
+
+    <div class="container">
+        <!-- Section 1 -->
+        <div class="tip-section">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Heart Care">
+            <h2>1. Managing Existing Heart Conditions</h2>
+            <ul>
+                <li><strong>Follow medical advice strictly</strong> — never skip medications or appointments</li>
+                <li><strong>Heart-healthy diet:</strong> Focus on whole grains, vegetables, lean proteins, and healthy fats</li>
+                <li><strong>Safe exercise:</strong> 30 minutes of walking daily (with doctor's approval)</li>
+                <li><strong>Stress management:</strong> Try meditation, yoga, or deep breathing exercises</li>
+                <li><strong>Monitor vitals:</strong> Keep track of blood pressure, cholesterol, and weight</li>
+                <li><strong>Hydration balance:</strong> Drink enough water but follow fluid restrictions if any</li>
+                <li><strong>Sleep quality:</strong> Aim for 7-8 hours of restful sleep each night</li>
+                <li><strong>Support system:</strong> Join a cardiac rehabilitation program if available</li>
+            </ul>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="tip-section">
+            <img src="https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Heart Risk">
+            <h2>2. Reducing Risk Factors</h2>
+            <ul>
+                <li><strong>Know the warning signs:</strong> Chest pain, shortness of breath, fatigue, palpitations</li>
+                <li><strong>Quit smoking completely</strong> — benefits begin within 20 minutes!</li>
+                <li><strong>Limit alcohol</strong> to 1 drink/day for women, 2 for men</li>
+                <li><strong>Salt control:</strong> Aim for less than 1,500mg sodium daily</li>
+                <li><strong>Active lifestyle:</strong> 150 minutes of moderate exercise weekly</li>
+                <li><strong>Weight management:</strong> Even 5-10% weight loss improves heart health</li>
+                <li><strong>Omega-3 rich foods:</strong> Fatty fish, walnuts, chia seeds</li>
+                <li><strong>Regular check-ups:</strong> Annual physicals with blood work</li>
+            </ul>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="tip-section">
+            <img src="https://images.unsplash.com/photo-1535914254981-b5012eebbd15?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Healthy Heart">
+            <h2>3. Maintaining a Healthy Heart</h2>
+            <ul>
+                <li><strong>Balanced exercise:</strong> Cardio + strength training + flexibility</li>
+                <li><strong>Colorful plate:</strong> Variety of fruits and vegetables daily</li>
+                <li><strong>Hydration:</strong> 8-10 glasses of water throughout the day</li>
+                <li><strong>Quality sleep:</strong> 7-8 hours with consistent schedule</li>
+                <li><strong>Stress reduction:</strong> Mindfulness, hobbies, social connections</li>
+                <li><strong>Limit processed foods:</strong> Focus on whole, natural ingredients</li>
+                <li><strong>Annual physicals:</strong> Prevention is better than cure</li>
+                <li><strong>Healthy relationships:</strong> Strong social ties reduce heart disease risk</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" id="fab" title="Quick Tips">
+        <i class="fas fa-heart"></i>
+    </div>
+
+    <!-- Quick Tips Modal -->
+    <div id="quickTipsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; position: relative;">
+            <button id="closeModal" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+            <h3 style="color: var(--primary); margin-top: 0;">Heart Health Quick Tips</h3>
+            <ul>
+                <li>Walk 10,000 steps daily</li>
+                <li>Eat a handful of nuts each day</li>
+                <li>Laugh often — it's good for circulation!</li>
+                <li>Practice deep breathing daily</li>
+                <li>Stand up every hour if sedentary</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartCount = 15;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = 10 + Math.random() * 20 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+        
+        // Progress bar on scroll
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+        };
+        
+        // Quick tips modal
+        document.getElementById('fab').addEventListener('click', function() {
+            document.getElementById('quickTipsModal').style.display = 'flex';
+        });
+        
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('quickTipsModal').style.display = 'none';
+        });
+        
+        // Initialize on load
+        window.onload = function() {
+            createHearts();
+            
+            // Animate sections on scroll
+            const sections = document.querySelectorAll('.tip-section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'perspective(1000px) rotateX(0deg) translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                section.style.opacity = 0;
+                section.style.transform = 'perspective(1000px) rotateX(10deg) translateY(50px)';
+                section.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                observer.observe(section);
+            });
+        };
+    </script>
+</body>
+</html>

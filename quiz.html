@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthGuard Pro | Wellness Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #ff6b81;
+            --accent: #ff9f43;
+            --light: #f8f9fa;
+            --dark: #2f3542;
+            --success: #2ed573;
+            --neon-blue: #0ff0fc;
+            --neon-pink: #ff2ced;
+            --neon-purple: #9d00ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) translateX(1000px);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(15, 240, 252, 0.3);
+            position: relative;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Glass Morphism Quiz Cards */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            animation: fadeInUp 0.6s forwards;
+            opacity: 0;
+        }
+
+        .quiz-card:hover {
+            transform: perspective(1000px) rotateX(5deg) translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--neon-blue), var(--neon-pink));
+        }
+
+        .quiz-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0) 35%,
+                rgba(255,255,255,0.03) 45%,
+                rgba(255,255,255,0) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .quiz-card:hover::after {
+            left: 100%;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: white;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            border-radius: 50%;
+            font-size: 1rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(157, 0, 255, 0.5);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .option input {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .option input:checked {
+            border-color: var(--neon-blue);
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .option input:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: var(--dark);
+            border-radius: 50%;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Submit Button with Neon Effect */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 1.3rem 2.8rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 0 25px rgba(157, 0, 255, 0.4);
+            width: 100%;
+            max-width: 280px;
+            margin: 2rem auto;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.6s;
+            z-index: -1;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 40px rgba(157, 0, 255, 0.7);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: none;
+            outline: none;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--secondary);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) perspective(1000px) rotateX(10deg);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) perspective(1000px) rotateX(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .quiz-card {
+                padding: 1.5rem;
+            }
+            
+            .submit-btn {
+                max-width: 100%;
+                padding: 1.2rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header -->
+    <div class="header">
+        <a href="#" class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>HealthGuard Pro</span>
+        </a>
+        <h1 class="title">WELLNESS ASSESSMENT</h1>
+        <p class="subtitle">Answer honestly to unlock your personalized health analysis</p>
+    </div>
+
+    <!-- Quiz Container -->
+    <form action="/quiz" method="POST">
+        <div class="quiz-container">
+            <div class="quiz-card" style="animation-delay: 0.1s">
+                <div class="question">
+                    <span class="question-number">1</span>
+                    Do you currently smoke?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q1-yes" name="q1" value="30">
+                        <label for="q1-yes">Yes, regularly</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1-no" name="q1" value="0">
+                        <label for="q1-no">No, never</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.2s">
+                <div class="question">
+                    <span class="question-number">2</span>
+                    How often do you exercise?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q2-yes" name="q2" value="0">
+                        <label for="q2-yes">Regularly (3+ times weekly)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2-no" name="q2" value="20">
+                        <label for="q2-no">Occasionally</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2-never" name="q2" value="30">
+                        <label for="q2-never">Rarely or never</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.3s">
+                <div class="question">
+                    <span class="question-number">3</span>
+                    Your typical junk food consumption?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q3-rarely" name="q3" value="0">
+                        <label for="q3-rarely">Rarely (less than weekly)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3-sometimes" name="q3" value="20">
+                        <label for="q3-sometimes">Sometimes (2-3 times weekly)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3-often" name="q3" value="30">
+                        <label for="q3-often">Often (daily or almost daily)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.4s">
+                <div class="question">
+                    <span class="question-number">4</span>
+                    Have you been diagnosed with high blood pressure?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q4-yes" name="q4" value="30">
+                        <label for="q4-yes">Yes</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4-no" name="q4" value="0">
+                        <label for="q4-no">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.5s">
+                <div class="question">
+                    <span class="question-number">5</span>
+                    Average nightly sleep duration?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q5-optimal" name="q5" value="0">
+                        <label for="q5-optimal">7-9 hours (recommended)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5-less" name="q5" value="10">
+                        <label for="q5-less">Less than 7 hours</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5-more" name="q5" value="5">
+                        <label for="q5-more">More than 9 hours</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.6s">
+                <div class="question">
+                    <span class="question-number">6</span>
+                    Your alcohol consumption pattern?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q6-heavy" name="q6" value="30">
+                        <label for="q6-heavy">Regularly/heavy</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6-moderate" name="q6" value="20">
+                        <label for="q6-moderate">Moderate/social</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6-none" name="q6" value="0">
+                        <label for="q6-none">Rarely or never</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.7s">
+                <div class="question">
+                    <span class="question-number">7</span>
+                    How would you describe your stress management?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q7-good" name="q7" value="0">
+                        <label for="q7-good">Good - I handle stress well</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q7-okay" name="q7" value="10">
+                        <label for="q7-okay">Okay - some room for improvement</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q7-poor" name="q7" value="20">
+                        <label for="q7-poor">Poor - often feel overwhelmed</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card" style="animation-delay: 0.8s">
+                <div class="question">
+                    <span class="question-number">8</span>
+                    Daily vegetable and fruit intake?
+                </div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q8-excellent" name="q8" value="0">
+                        <label for="q8-excellent">5+ servings daily</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q8-good" name="q8" value="10">
+                        <label for="q8-good">3-4 servings daily</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q8-low" name="q8" value="20">
+                        <label for="q8-low">Less than 3 servings</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">ANALYZE RESULTS</button>
+        </div>
+    </form>
+
+    <!-- Floating Action Button -->
+    <button class="fab" title="Quick Help" id="fab">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <script>
+        // Create particle background
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random positioning
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random animation duration and delay
+                particle.style.animationDuration = 5 + Math.random() * 20 + 's';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Add shake animation for unanswered questions
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    20%, 60% { transform: translateX(-8px); }
+                    40%, 80% { transform: translateX(8px); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // FAB click event
+            document.getElementById('fab').addEventListener('click', function() {
+                alert("Need help with the assessment? Answer all questions honestly to get your personalized health score. Your data is kept confidential.");
+            });
+        });
+    </script>
+</body>
+</html>

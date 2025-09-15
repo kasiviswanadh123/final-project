@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartHealth | Patient History & Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+            --hospital-blue: #e8f4f8;
+            --hospital-dark-blue: #005b96;
+            --hospital-light: #f0f9ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--hospital-light);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--hospital-dark-blue) 0%, var(--primary) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        .logo h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+        
+        .user-profile {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .user-profile img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--hospital-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .user-profile h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-profile p {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 1rem;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--hospital-blue);
+            color: var(--hospital-dark-blue);
+        }
+        
+        .sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Content Area */
+        .content-area {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h2 {
+            font-weight: 600;
+            color: var(--hospital-dark-blue);
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-filter select, .date-filter button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        .date-filter button {
+            background-color: var(--hospital-dark-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .date-filter button:hover {
+            background-color: var(--primary);
+        }
+        
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        
+        .history-table th, .history-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-table th {
+            background-color: var(--hospital-blue);
+            color: var(--hospital-dark-blue);
+            font-weight: 600;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .risk-high {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .risk-medium {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .risk-low {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        /* Charts Section */
+        .charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+        
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: var(--hospital-dark-blue);
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        
+        .chart-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--hospital-blue);
+            color: var(--hospital-dark-blue);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-actions button:hover {
+            background-color: var(--hospital-dark-blue);
+            color: white;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary);
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--hospital-blue);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--hospital-dark-blue);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    <h1>HeartHealth Analytics</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/dashboard">Home</a></li>
+                        <li><a href="/dashboard">Predict</a></li>
+                        <li><a href="#" class="active">History</a></li>
+                        <li><a href="/visualize">Visualize</a></li>
+                        <li><a href="/resources">Resources</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="dashboard">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="user-profile">
+                    <img src="https://xsgames.co/randomusers/avatar.php?g=male" alt="User Profile">
+                    <h3>{{ username }}</h3>
+                    <p>Patient since: {{ history[0].created_at.strftime('%b %Y') if history else 'N/A' }}</p>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active"><i class="fas fa-history"></i> Prediction History</a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> Health Trends</a></li>
+                    <li><a href="#"><i class="fas fa-heart"></i> Risk Analysis</a></li>
+                    <li><a href="#"><i class="fas fa-file-medical"></i> Reports</a></li>
+                    <li><a href="#"><i class="fas fa-user-md"></i> Doctor Consult</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="page-header">
+                    <h2>Heart Disease Prediction History</h2>
+                    <div class="date-filter">
+                        <select>
+                            <option>Last 7 days</option>
+                            <option selected>Last 30 days</option>
+                            <option>Last 3 months</option>
+                            <option>Last 6 months</option>
+                            <option>Last year</option>
+                        </select>
+                        <button>Apply Filter</button>
+                    </div>
+                </div>
+
+                {% if history %}
+                <!-- History Table -->
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>BMI</th>
+                            <th>BP</th>
+                            <th>Prediction Result</th>
+                            <th>Risk Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in history %}
+                        <tr>
+                            <td>{{ record.created_at.strftime('%d %b %Y') }}</td>
+                            <td>{{ record.age }}</td>
+                            <td>{{ record.gender }}</td>
+                            <td>{{ record.bmi }}</td>
+                            <td>{{ record.bp }}</td>
+                            <td>{{ record.prediction_result }}</td>
+                            <td class="risk-{{ record.risk_level|lower }}">{{ record.risk_level }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Charts Section -->
+                <div class="charts">
+                    <div class="chart-container">
+                        <h3>Risk Level Over Time</h3>
+                        <canvas id="riskChart"></canvas>
+                        <div class="chart-actions">
+                            <button>Download</button>
+                            <button>Share with Doctor</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Health Metrics Trends</h3>
+                        <canvas id="metricsChart"></canvas>
+                        <div class="chart-actions">
+                            <button>Download</button>
+                            <button>Share with Doctor</button>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- No Data Message -->
+                <div class="no-data">
+                    <i class="fas fa-history"></i>
+                    <h3>No Prediction History Yet</h3>
+                    <p>You haven't made any predictions yet. Your prediction history will appear here after you complete a heart disease risk assessment.</p>
+                    <a href="/dashboard" class="date-filter button">Make Your First Prediction</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>HeartHealth</h3>
+                    <p>Advanced heart disease prediction and monitoring for better cardiovascular health management.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/dashboard">Home</a>
+                    <a href="/dashboard">Predict Risk</a>
+                    <a href="/history">History</a>
+                    <a href="/visualize">Visualizations</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <a href="/tips">Heart Health Tips</a>
+                    <a href="/resources">Diet Plans</a>
+                    <a href="/resources">Exercise Guidelines</a>
+                    <a href="/resources">Medical Resources</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-phone"></i> +1 (800) 123-4567</p>
+                    <p><i class="fas fa-envelope"></i> support@hearthealth.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Medical Dr, Health City</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 HeartHealth Analytics. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize charts with dynamic data
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if history %}
+            // Risk Level Chart
+            const riskCtx = document.getElementById('riskChart').getContext('2d');
+            const riskChart = new Chart(riskCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ chart_data.dates | tojson }},
+                    datasets: [{
+                        label: 'Risk Score',
+                        data: {{ chart_data.risk_scores | tojson }},
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Metrics Chart
+            const metricsCtx = document.getElementById('metricsChart').getContext('2d');
+            const metricsChart = new Chart(metricsCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ chart_data.dates | tojson }},
+                    datasets: [{
+                        label: 'Health Metric (BMI * 10)',
+                        data: {{ chart_data.cholesterol_levels | tojson }},
+                        backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                        borderColor: 'rgba(23, 162, 184, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            suggestedMin: 150,
+                            suggestedMax: 300
+                        }
+                    }
+                }
+            });
+            {% endif %}
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Pro - Doctor Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2b7a78;
+            --primary-dark: #17252a;
+            --primary-light: #3aafa9;
+            --secondary: #def2f1;
+            --accent: #feffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .background-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+        
+        .shape-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary-light);
+            top: -300px;
+            left: -300px;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            bottom: -200px;
+            right: -200px;
+            animation: float 18s infinite ease-in-out reverse;
+        }
+        
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--primary-dark);
+            top: 50%;
+            left: 20%;
+            animation: float 12s infinite ease-in-out;
+        }
+        
+        .register-container {
+            background-color: var(--accent);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 420px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .register-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 50px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .logo h1 {
+            color: var(--primary-dark);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+            appearance: none;
+        }
+        
+        .input-group select {
+            padding-right: 30px;
+            cursor: pointer;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 175, 169, 0.2);
+            background-color: white;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 18px;
+        }
+        
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            pointer-events: none;
+        }
+        
+        .password-strength {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            background: #e74c3c;
+            transition: all 0.3s;
+        }
+        
+        .terms-conditions {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0 25px;
+            font-size: 13px;
+        }
+        
+        .terms-conditions input {
+            margin-right: 10px;
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+        
+        .terms-conditions label {
+            color: #666;
+        }
+        
+        .terms-conditions a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .terms-conditions a:hover {
+            text-decoration: underline;
+        }
+        
+        .register-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(43, 122, 120, 0.3);
+        }
+        
+        .register-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(43, 122, 120, 0.4);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .login-link a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .medical-icons {
+            position: absolute;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .medical-icons i {
+            font-size: 150px;
+            color: var(--primary-dark);
+        }
+        
+        .icon-1 {
+            top: 50px;
+            right: -30px;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        .icon-2 {
+            bottom: 30px;
+            left: -40px;
+            animation: float 10s infinite ease-in-out reverse;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .register-container {
+                width: 90%;
+                padding: 30px 20px;
+            }
+            
+            .shape-1, .shape-2, .shape-3 {
+                display: none;
+            }
+        }
+        .flash-messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+    </style>
+</head>
+<body>
+    <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <div class="register-container">
+        <div class="medical-icons">
+            <i class="fas fa-heartbeat icon-1"></i>
+            <i class="fas fa-stethoscope icon-2"></i>
+        </div>
+        
+        <div class="logo">
+            <i class="fas fa-user-md"></i>
+            <h1>Join MediCare Pro</h1>
+            <p>Register your medical practice</p>
+        </div>
+        <!-- Change the form opening tag to this: -->
+<form method="POST" action="{{ url_for('doctor_register') }}">
+    <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" name="full_name" placeholder="Full Name" required>
+    </div>
+    
+    <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" name="email" placeholder="Professional Email" required>
+    </div>
+    
+    <div class="input-group">
+        <i class="fas fa-id-card"></i>
+        <input type="text" name="license_number" placeholder="Medical License Number" required>
+    </div>
+    
+    <div class="input-group">
+        <i class="fas fa-stethoscope"></i>
+        <select name="specialization" required>
+            <option value="" disabled selected>Select Specialization</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Endocrinology">Endocrinology</option>
+            <option value="Gastroenterology">Gastroenterology</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Oncology">Oncology</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Psychiatry">Psychiatry</option>
+            <option value="Radiology">Radiology</option>
+            <option value="Surgery">Surgery</option>
+            <option value="Other">Other</option>
+        </select>
+        <i class="fas fa-chevron-down select-arrow"></i>
+    </div>
+    
+    <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" name="password" id="password" placeholder="Create Password" required>
+        <div class="password-strength">
+            <div class="strength-meter" id="strength-meter"></div>
+        </div>
+    </div>
+    
+    <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+    </div>
+    
+    <div class="terms-conditions">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and confirm that I am a licensed medical professional.</label>
+    </div>
+    
+    <button type="submit" class="register-btn">REGISTER</button>
+    
+    <div class="login-link">
+        Already have an account? <a href="{{ url_for('doctor_login') }}">Login here</a>
+    </div>
+</form>
+        
+    </div>
+
+    <script>
+        // Password strength indicator
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.getElementById('strength-meter');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Check for length
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // Check for character variety
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update strength meter
+            const width = (strength / 5) * 100;
+            strengthMeter.style.width = width + '%';
+            
+            // Update color based on strength
+            if (strength <= 2) {
+                strengthMeter.style.backgroundColor = '#e74c3c'; // Red
+            } else if (strength <= 3) {
+                strengthMeter.style.backgroundColor = '#f39c12'; // Orange
+            } else {
+                strengthMeter.style.backgroundColor = '#2ecc71'; // Green
+            }
+        });
+    </script>
+</body>
+</html>

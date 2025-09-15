@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCore | Secure Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #93c5fd;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #3b82f6;
+            --background: #f0f9ff;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text: #1e3a8a;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            background: 
+                radial-gradient(circle at 0% 30%, rgba(37, 99, 235, 0.1), transparent 30%),
+                radial-gradient(circle at 100% 70%, rgba(16, 185, 129, 0.1), transparent 30%),
+                linear-gradient(135deg, #dbeafe, #f0f9ff, #e0f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 35px;
+            box-shadow: 
+                0 25px 50px -12px rgba(37, 99, 235, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.9),
+                0 10px 30px rgba(37, 99, 235, 0.1);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 5px rgba(37, 99, 235, 0.2));
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .tagline {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e2e8f0;
+            outline: none;
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus + .input-icon {
+            color: var(--secondary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            outline: none;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--text-light), #94a3b8);
+        }
+
+        .verification-code {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .verification-code input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .verification-code input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            outline: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: block;
+        }
+
+        .message.info {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            display: block;
+        }
+
+        .resend-link {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-link {
+            margin-top: 25px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 30px 25px;
+            }
+            
+            .verification-code {
+                gap: 8px;
+            }
+            
+            .verification-code input {
+                width: 45px;
+                height: 55px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <i class="fas fa-hospital-symbol logo-icon"></i>
+                <div class="logo-text">MediCore</div>
+            </div>
+            <p class="tagline">Create your secure health portal account</p>
+            
+            <div class="form-container">
+                <!-- Step 1: Registration Form -->
+                <div class="form-step active" id="step1">
+                    <div class="message info" id="step1-message">
+                        Please fill in all details to create your account
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" placeholder="Enter your full name" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Create a strong password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    
+                    <button class="btn" id="register-btn">Register</button>
+                    
+                    <div class="login-link">
+                        Already have an account? <a href="#" id="go-to-login">Login here</a>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Email Verification -->
+                <div class="form-step" id="step2">
+                    <div class="message info" id="step2-message">
+                        We've sent a verification code to your email address
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="verification-code">Verification Code</label>
+                        <div class="verification-code">
+                            <input type="text" maxlength="1" id="digit1" oninput="moveToNext(this, 'digit2')">
+                            <input type="text" maxlength="1" id="digit2" oninput="moveToNext(this, 'digit3')">
+                            <input type="text" maxlength="1" id="digit3" oninput="moveToNext(this, 'digit4')">
+                            <input type="text" maxlength="1" id="digit4" oninput="moveToNext(this, 'digit5')">
+                            <input type="text" maxlength="1" id="digit5" oninput="moveToNext(this, 'digit6')">
+                            <input type="text" maxlength="1" id="digit6" oninput="moveToNext(this, 'verify-btn')">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="verify-btn">Verify Email</button>
+                    <button class="btn btn-secondary" id="back-to-register">Back to Registration</button>
+                    
+                    <div class="resend-link" id="resend-code">
+                        Didn't receive the code? Resend
+                    </div>
+                </div>
+                
+                <!-- Step 3: Success Message -->
+                <div class="form-step" id="step3">
+                    <div class="message success" id="step3-message">
+                        <i class="fas fa-check-circle"></i> Your account has been successfully created!
+                    </div>
+                    
+                    <div style="font-size: 16px; margin: 30px 0;">
+                        <p>You can now login to your MediCore health portal.</p>
+                    </div>
+                    
+                    <button class="btn" id="go-to-login-btn">Go to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const registerBtn = document.getElementById('register-btn');
+        const verifyBtn = document.getElementById('verify-btn');
+        const backToRegisterBtn = document.getElementById('back-to-register');
+        const goToLoginBtn = document.getElementById('go-to-login-btn');
+        const resendCodeLink = document.getElementById('resend-code');
+        const goToLoginLink = document.getElementById('go-to-login');
+        
+        // Store registration data temporarily
+        let userData = {};
+        let verificationCode = '';
+        
+        // Move to next input field in verification code
+        function moveToNext(current, nextFieldId) {
+            if (current.value.length === 1) {
+                document.getElementById(nextFieldId).focus();
+            }
+        }
+        
+        // Generate random verification code
+        function generateVerificationCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        // Simulate sending email (in a real app, this would call your backend)
+        function sendVerificationEmail(email, code) {
+            console.log(`Simulating email sent to: ${email} with code: ${code}`);
+            // In a real application, you would make an API call to your backend here
+            // which would then send an actual email to the user
+            return true;
+        }
+        
+        // Show a specific form step
+        function showStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show the requested step
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+        }
+        
+        // Validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Validate password strength
+        function isStrongPassword(password) {
+            return password.length >= 8;
+        }
+        
+        // Handle registration form submission
+        registerBtn.addEventListener('click', function() {
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Basic validation
+            if (!fullname || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            if (!isStrongPassword(password)) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Store user data temporarily
+            userData = { fullname, email, password };
+            
+            // In a real application, you would check if email exists via an API call
+            // For simulation purposes, we'll assume it's available
+            console.log('Checking if email exists...');
+            
+            // Simulate API call to check email availability
+            setTimeout(() => {
+                // For demo, let's assume email is available
+                const isEmailAvailable = true;
+                
+                if (isEmailAvailable) {
+                    // Generate and send verification code
+                    verificationCode = generateVerificationCode();
+                    const emailSent = sendVerificationEmail(email, verificationCode);
+                    
+                    if (emailSent) {
+                        // Move to verification step
+                        showStep(2);
+                    } else {
+                        alert('Failed to send verification email. Please try again.');
+                    }
+                } else {
+                    alert('This email is already registered. Please use a different email or login.');
+                }
+            }, 1000);
+        });
+        
+        // Handle verification code submission
+        verifyBtn.addEventListener('click', function() {
+            // Get the entered code
+            const enteredCode = 
+                document.getElementById('digit1').value +
+                document.getElementById('digit2').value +
+                document.getElementById('digit3').value +
+                document.getElementById('digit4').value +
+                document.getElementById('digit5').value +
+                document.getElementById('digit6').value;
+            
+            if (enteredCode.length !== 6) {
+                alert('Please enter the complete verification code');
+                return;
+            }
+            
+            // Verify the code
+            if (enteredCode === verificationCode) {
+                // In a real application, you would send the data to your backend here
+                console.log('Registration data to be saved:', userData);
+                
+                // Simulate API call to save user data
+                setTimeout(() => {
+                    // Show success message
+                    showStep(3);
+                }, 1000);
+            } else {
+                alert('Invalid verification code. Please try again.');
+            }
+        });
+        
+        // Handle resend verification code
+        resendCodeLink.addEventListener('click', function() {
+            verificationCode = generateVerificationCode();
+            sendVerificationEmail(userData.email, verificationCode);
+            alert('New verification code sent to your email');
+        });
+        
+        // Navigation handlers
+        backToRegisterBtn.addEventListener('click', function() {
+            showStep(1);
+        });
+        
+        goToLoginBtn.addEventListener('click', function() {
+            alert('In a real application, this would redirect to the login page');
+            // window.location.href = 'login.html';
+        });
+        
+        goToLoginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('In a real application, this would redirect to the login page');
+            // window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
